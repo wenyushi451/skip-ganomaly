@@ -59,10 +59,10 @@ class Ganomaly(BaseModel):
 
         ##
         # Initialize input tensors.
-        self.input = torch.empty(size=(self.opt.batchsize, 3, self.opt.isize, self.opt.isize), dtype=torch.float32, device=self.device)
+        self.input = torch.empty(size=(self.opt.batchsize, 3 if self.opt.nc == 3 else 1, self.opt.isize, self.opt.isize), dtype=torch.float32, device=self.device)
         self.label = torch.empty(size=(self.opt.batchsize,), dtype=torch.float32, device=self.device)
         self.gt    = torch.empty(size=(opt.batchsize,), dtype=torch.long, device=self.device)
-        self.fixed_input = torch.empty(size=(self.opt.batchsize, 3, self.opt.isize, self.opt.isize), dtype=torch.float32, device=self.device)
+        self.fixed_input = torch.empty(size=(self.opt.batchsize, 3 if self.opt.nc == 3 else 1, self.opt.isize, self.opt.isize), dtype=torch.float32, device=self.device)
         self.real_label = torch.ones (size=(self.opt.batchsize,), dtype=torch.float32, device=self.device)
         self.fake_label = torch.zeros(size=(self.opt.batchsize,), dtype=torch.float32, device=self.device)
         ##
@@ -90,9 +90,13 @@ class Ganomaly(BaseModel):
     def backward_g(self):
         """ Backpropagate through netG
         """
+        # GAN loss
         self.err_g_adv = self.opt.w_adv * self.l_adv(self.feat_fake, self.feat_real)
+        # Construct loss
         self.err_g_con = self.opt.w_con * self.l_con(self.fake, self.input)
+        # Latent comparison loss
         self.err_g_lat = self.opt.w_lat * self.l_enc(self.latent_o, self.latent_i)
+        # Total loss
         self.err_g = self.err_g_adv + self.err_g_con + self.err_g_lat
         self.err_g.backward(retain_graph=True)
 
@@ -112,6 +116,7 @@ class Ganomaly(BaseModel):
     def optimize_params(self):
         """ Forwardpass, Loss Computation and Backwardpass.
         """
+        
         # Forward-pass
         self.forward_g()
         self.forward_d()
@@ -169,6 +174,7 @@ class Ganomaly(BaseModel):
                 self.set_input(data)
                 self.fake, latent_i, latent_o = self.netg(self.input)
 
+                # distance between latent features
                 error = torch.mean(torch.pow((latent_i-latent_o), 2), dim=1)
                 time_o = time.time()
 

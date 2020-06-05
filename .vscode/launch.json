@@ -1,0 +1,29 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Python: Current File",
+            "type": "python",
+            "request": "launch",
+            "program": "/dept/cas/weshiz/skip-ganomaly/train.py",
+            "console": "integratedTerminal",
+            "args": ["--dataset", "csot",
+                    //  "--abnormal_class", "airplane",
+                     "--model", "ganomaly",
+                     "--isize", "256",
+                     "--niter", "15",
+                     "--batchsize", "4",
+                     "--extralayers", "2",
+                     "--print_freq", "4",
+                     "--save_test_images",
+                     "--verbose"
+                     
+            ]
+        }
+    ]
+}
+
+

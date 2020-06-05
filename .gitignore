@@ -10,7 +10,7 @@ projector/
 __pycache__/
 *.pylintrc
 
-.vscode/
+# .vscode/
 .idea/
 .ganomaly/
 

@@ -60,11 +60,48 @@ def load_data(opt):
         train_ds, valid_ds = get_mnist_anomaly_dataset(train_ds, valid_ds, int(opt.abnormal_class))
 
     # FOLDER
+    elif opt.dataset in ['csot']:
+        transform = transforms.Compose([transforms.Resize(opt.isize),
+                                        transforms.CenterCrop(opt.isize),
+                                        transforms.ToTensor(),
+                                        transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))])
+        train_ds = ImageFolder(os.path.join(opt.dataroot, 'train'), transform)
+        valid_ds = ImageFolder(os.path.join(opt.dataroot, 'test'), transform)
+    
+    elif opt.dataset in ['yunfangbu']:
+        print('yunfangbu')
+        transform = transforms.Compose([transforms.ToTensor(), transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))])
+        train_ds = ImageFolder(os.path.join(opt.dataroot, 'train'), transform)
+        valid_ds = ImageFolder(os.path.join(opt.dataroot, 'test'), transform)
+        
+    elif opt.dataset in ['anomaly1']:
+        transform = transforms.Compose([transforms.Grayscale(num_output_channels=1), transforms.Resize(opt.isize),
+                                    transforms.CenterCrop(opt.isize),
+                                    transforms.ToTensor(),
+                                    transforms.Normalize((0.5,), (0.5))])
+        train_ds = ImageFolder(os.path.join(opt.dataroot, 'train'), transform)
+        valid_ds = ImageFolder(os.path.join(opt.dataroot, 'test'), transform)
+    
+    elif opt.dataset in ['anomaly10']:
+        transform = transforms.Compose([transforms.Grayscale(num_output_channels=1), transforms.Resize(opt.isize),
+                                        transforms.CenterCrop(opt.isize),
+                                        transforms.ToTensor(),
+                                        transforms.Normalize((0.5,), (0.5))])
+        train_ds = ImageFolder(os.path.join(opt.dataroot, 'train'), transform)
+        valid_ds = ImageFolder(os.path.join(opt.dataroot, 'test'), transform)
+        
     else:
         transform = transforms.Compose([transforms.Resize(opt.isize),
                                         transforms.CenterCrop(opt.isize),
                                         transforms.ToTensor(),
-                                        transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5)), ])
+                                        transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))])
+        if opt.nc == 1:
+            print('Input is grayscale image')
+            transform = transforms.Compose([transforms.Grayscale(num_output_channels=1),
+                                        transforms.Resize(opt.isize),
+                                        transforms.CenterCrop(opt.isize),
+                                        transforms.ToTensor(),
+                                        transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))])
 
         train_ds = ImageFolder(os.path.join(opt.dataroot, 'train'), transform)
         valid_ds = ImageFolder(os.path.join(opt.dataroot, 'test'), transform)

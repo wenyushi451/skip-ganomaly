@@ -15,7 +15,6 @@ import numpy as np
 import os
 import os.path
 import random
-import imageio
 import numpy as np
 
 # pylint: disable=E1101
@@ -223,15 +222,15 @@ def get_mnist_anomaly_dataset(train_ds, valid_ds, abn_cls_idx=0):
     # Find normal and abnormal images
     nrm_trn_img = trn_img[nrm_trn_idx]    # Normal training images
     abn_trn_img = trn_img[abn_trn_idx]    # Abnormal training images.
-    nrm_tst_img = tst_img[nrm_tst_idx]    # Normal training images
-    abn_tst_img = tst_img[abn_tst_idx]    # Abnormal training images.
+    nrm_tst_img = tst_img[nrm_tst_idx]    # Normal testing images
+    abn_tst_img = tst_img[abn_tst_idx]    # Abnormal testing images.
 
     # --
     # Find normal and abnormal labels.
     nrm_trn_lbl = trn_lbl[nrm_trn_idx]    # Normal training labels
     abn_trn_lbl = trn_lbl[abn_trn_idx]    # Abnormal training labels.
-    nrm_tst_lbl = tst_lbl[nrm_tst_idx]    # Normal training labels
-    abn_tst_lbl = tst_lbl[abn_tst_idx]    # Abnormal training labels.
+    nrm_tst_lbl = tst_lbl[nrm_tst_idx]    # Normal testing labels
+    abn_tst_lbl = tst_lbl[abn_tst_idx]    # Abnormal testing labels.
 
     # --
     # Assign labels to normal (0) and abnormals (1)

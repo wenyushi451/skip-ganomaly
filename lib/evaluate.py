@@ -34,6 +34,8 @@ def evaluate(labels, scores, metric='roc'):
 ##
 def roc(labels, scores, saveto=None):
     """Compute ROC curve and ROC area for each class"""
+    print("\nscores: {}".format(scores))
+    print("\nlabels: {}".format(labels))
     fpr = dict()
     tpr = dict()
     roc_auc = dict()

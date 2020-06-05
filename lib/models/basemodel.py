@@ -186,6 +186,10 @@ class BaseModel():
             epoch_iter += self.opt.batchsize
 
             self.set_input(data)
+            for param_group in self.optimizer_g.param_groups:
+                print(f"G net learning rate: {param_group['lr']}")
+            for param_group in self.optimizer_d.param_groups:
+                print(f"G net learning rate: {param_group['lr']}")
             self.optimize_params()
 
             if self.total_steps % self.opt.print_freq == 0:
@@ -287,7 +291,7 @@ class BaseModel():
                         self.times = np.array(self.times)
                         self.times = np.mean(self.times[:100] * 1000)
 
-                        # Scale error vector between [0, 1]
+            # Scale error vector between [0, 1]
             self.an_scores = (self.an_scores - torch.min(self.an_scores)) / (torch.max(self.an_scores) - torch.min(self.an_scores))
             auc = evaluate(self.gt_labels, self.an_scores, metric=self.opt.metric)
             performance = OrderedDict([('Avg Run Time (ms/batch)', self.times), ('AUC', auc)])

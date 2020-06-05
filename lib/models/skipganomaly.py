@@ -168,6 +168,8 @@ class Skipganomaly(BaseModel):
 
             # Create big error tensor for the test set.
             self.an_scores = torch.zeros(size=(len(self.data.valid.dataset),), dtype=torch.float32, device=self.device)
+            self.rec = torch.zeros(size=(len(self.data.valid.dataset),), dtype=torch.float32, device=self.device)
+            self.lat = torch.zeros(size=(len(self.data.valid.dataset),), dtype=torch.float32, device=self.device)
             self.gt_labels = torch.zeros(size=(len(self.data.valid.dataset),), dtype=torch.long, device=self.device)
             self.features  = torch.zeros(size=(len(self.data.valid.dataset), self.opt.nz), dtype=torch.float32, device=self.device)
 
@@ -199,6 +201,8 @@ class Skipganomaly(BaseModel):
                 time_o = time.time()
 
                 self.an_scores[i*self.opt.batchsize: i*self.opt.batchsize + error.size(0)] = error.reshape(error.size(0))
+                self.rec[i*self.opt.batchsize: i*self.opt.batchsize + error.size(0)] = rec.reshape(error.size(0))
+                self.lat[i*self.opt.batchsize: i*self.opt.batchsize + error.size(0)] = lat.reshape(error.size(0))
                 self.gt_labels[i*self.opt.batchsize: i*self.opt.batchsize + error.size(0)] = self.gt.reshape(error.size(0))
 
                 self.times.append(time_o - time_i)
@@ -218,6 +222,8 @@ class Skipganomaly(BaseModel):
             # Scale error vector between [0, 1]
             self.an_scores = (self.an_scores - torch.min(self.an_scores)) / \
                              (torch.max(self.an_scores) - torch.min(self.an_scores))
+            print("\nrec: {}".format(self.rec))
+            print("\nlat: {}".format(self.lat))
             auc = roc(self.gt_labels, self.an_scores)
             performance = OrderedDict([('Avg Run Time (ms/batch)', self.times), ('AUC', auc)])
 

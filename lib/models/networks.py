@@ -34,6 +34,7 @@ class Encoder(nn.Module):
     def __init__(self, isize, nz, nc, ndf, ngpu, n_extra_layers=0, add_final_conv=True):
         super(Encoder, self).__init__()
         self.ngpu = ngpu
+        self.nz = nz
         assert isize % 16 == 0, "isize has to be a multiple of 16"
 
         main = nn.Sequential()
@@ -77,6 +78,8 @@ class Encoder(nn.Module):
             output = nn.parallel.data_parallel(self.main, input, range(self.ngpu))
         else:
             output = self.main(input)
+            
+        assert list(output.size())[-3:] == [self.nz, 1, 1], f"Last three dimension of encoder has to be [{self.nz}, 1, 1]"
 
         return output
 
@@ -313,7 +316,7 @@ def init_net(net, init_type='normal', gpu_ids=[]):
 def define_G(opt, norm='batch', use_dropout=False, init_type='normal'):
     netG = None
     norm_layer = get_norm_layer(norm_type=norm)
-    num_layer = int(np.log2(opt.isize))
+    num_layer = int(np.log2(opt.isize)) # how many downsampling
     netG = UnetGenerator(opt.nc, opt.nc, num_layer, opt.ngf, norm_layer=norm_layer, use_dropout=use_dropout)
     return init_net(netG, init_type, opt.gpu_ids)
 

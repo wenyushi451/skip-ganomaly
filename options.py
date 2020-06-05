@@ -30,7 +30,7 @@ class Options():
         self.parser.add_argument('--dataroot', default='', help='path to dataset')        
         self.parser.add_argument('--path', default='', help='path to the folder or image to be predicted.')
         self.parser.add_argument('--batchsize', type=int, default=64, help='input batch size')
-        self.parser.add_argument('--workers', type=int, help='number of data loading workers', default=8)
+        self.parser.add_argument('--workers', type=int, help='number of data loading workers', default=1)
         self.parser.add_argument('--droplast', action='store_true', default=True, help='Drop last batch size.')
         self.parser.add_argument('--isize', type=int, default=32, help='input image size.')
         self.parser.add_argument('--nc', type=int, default=3, help='input image channels')
