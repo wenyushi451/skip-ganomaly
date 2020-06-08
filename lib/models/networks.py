@@ -219,7 +219,7 @@ class NetD(nn.Module):
         model = Encoder(opt.isize, 1, opt.nc, opt.ngf, opt.ngpu, opt.extralayers)
         layers = list(model.main.children())
 
-        self.features = nn.Sequential(*layers[:-1])
+        self.features = nn.Sequential(*layers[:-1]) # the layer before last layer it is in 4*4
         self.classifier = nn.Sequential(layers[-1])
         # self.features.add_module('ConvFeauture', )
         self.classifier.add_module('Sigmoid', nn.Sigmoid())
@@ -496,7 +496,7 @@ class UnetSkipConnectionBlock(nn.Module):
                              stride=2, padding=1, bias=use_bias)
         downrelu = nn.LeakyReLU(0.2, True)
         downnorm = norm_layer(inner_nc)
-        uprelu = nn.ReLU(True)
+        uprelu = nn.LeakyReLU(True)
         upnorm = norm_layer(outer_nc)
 
         if outermost:

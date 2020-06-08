@@ -15,11 +15,12 @@ import torch.nn as nn
 import torch.utils.data
 import torchvision.utils as vutils
 
-from lib.models.networks import NetG, NetD, weights_init
+from lib.models.networks import NetG, NetD, BasicDiscriminator, weights_init
 from lib.visualizer import Visualizer
 from lib.loss import l2_loss
 from lib.evaluate import evaluate
 from lib.models.basemodel import BaseModel
+import wandb
 
 ##
 class Ganomaly(BaseModel):
@@ -131,6 +132,15 @@ class Ganomaly(BaseModel):
         self.optimizer_d.zero_grad()
         self.backward_d()
         self.optimizer_d.step()
+        
+        wandb.log({
+            "err_g_adv": self.err_g_adv,
+            "err_g_con": self.err_g_con,
+            "err_g_lat": self.err_g_lat,
+            "err_g": self.err_g,
+            "err_d": self.err_d
+            })
+                  
         if self.err_d.item() < 1e-5: self.reinit_d()
 
     ##

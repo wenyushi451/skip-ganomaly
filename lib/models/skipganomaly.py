@@ -23,7 +23,7 @@ from lib.visualizer import Visualizer
 from lib.loss import l2_loss
 from lib.evaluate import roc
 from lib.models.basemodel import BaseModel
-
+import wandb
 
 
 class Skipganomaly(BaseModel):
@@ -67,11 +67,11 @@ class Skipganomaly(BaseModel):
 
         ##
         # Initialize input tensors.
-        self.input = torch.empty(size=(self.opt.batchsize, 3, self.opt.isize, self.opt.isize), dtype=torch.float32, device=self.device)
-        self.noise = torch.empty(size=(self.opt.batchsize, 3, self.opt.isize, self.opt.isize), dtype=torch.float32, device=self.device)
+        self.input = torch.empty(size=(self.opt.batchsize, 3 if self.opt.nc == 3 else 1, self.opt.isize, self.opt.isize), dtype=torch.float32, device=self.device)
+        self.noise = torch.empty(size=(self.opt.batchsize, 3 if self.opt.nc == 3 else 1, self.opt.isize, self.opt.isize), dtype=torch.float32, device=self.device)
         self.label = torch.empty(size=(self.opt.batchsize,), dtype=torch.float32, device=self.device)
         self.gt = torch.empty(size=(opt.batchsize,), dtype=torch.long, device=self.device)
-        self.fixed_input = torch.empty(size=(self.opt.batchsize, 3, self.opt.isize, self.opt.isize), dtype=torch.float32, device=self.device)
+        self.fixed_input = torch.empty(size=(self.opt.batchsize, 3 if self.opt.nc == 3 else 1, self.opt.isize, self.opt.isize), dtype=torch.float32, device=self.device)
         self.real_label = torch.ones (size=(self.opt.batchsize,), dtype=torch.float32, device=self.device)
         self.fake_label = torch.zeros(size=(self.opt.batchsize,), dtype=torch.float32, device=self.device)
 
@@ -146,6 +146,14 @@ class Skipganomaly(BaseModel):
         self.forward()
         self.update_netg()
         self.update_netd()
+        
+        wandb.log({
+            "err_g_adv": self.err_g_adv,
+            "err_g_con": self.err_g_con,
+            "err_g_lat": self.err_g_lat,
+            "err_g": self.err_g,
+            "err_d": self.err_d
+            })
 
     ##
     def test(self, plot_hist=False):

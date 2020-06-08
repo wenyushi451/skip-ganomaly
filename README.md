@@ -2,6 +2,12 @@
 
 This repository contains PyTorch implementation of the following paper: Skip-GANomaly: Skip Connected and Adversarially Trained Encoder-Decoder Anomaly Detection [[1]](#6-reference)
 
+## 0. Export NetG and NetD
+The trained model is exported as ONNX format. Since the network is trained using Pytorch data parallel, it is needed to dump module of state_dict rather than state_dict. The code changes reflects at lib/models/basemodel.py:134-138. pytorch2onnx.py is the script to export the both models.
+``` shell
+python pytorch2onnx.py --dataset data, --model skipganomaly --isize 256 --epoch 13 --gpu_ids -1
+```
+
 ## 1. Table of Contents
 - [Skip-GANomaly](#skip-ganomaly)
   - [1. Table of Contents](#1-table-of-contents)

@@ -37,7 +37,7 @@ def load_data(opt):
     # LOAD DATA SET
     if opt.dataroot == '':
         opt.dataroot = './data/{}'.format(opt.dataset)
-
+    print(opt.dataset)
     ## CIFAR
     if opt.dataset in ['cifar10']:
         transform = transforms.Compose([transforms.Resize(opt.isize),
@@ -69,7 +69,6 @@ def load_data(opt):
         valid_ds = ImageFolder(os.path.join(opt.dataroot, 'test'), transform)
     
     elif opt.dataset in ['yunfangbu']:
-        print('yunfangbu')
         transform = transforms.Compose([transforms.ToTensor(), transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))])
         train_ds = ImageFolder(os.path.join(opt.dataroot, 'train'), transform)
         valid_ds = ImageFolder(os.path.join(opt.dataroot, 'test'), transform)
@@ -78,15 +77,14 @@ def load_data(opt):
         transform = transforms.Compose([transforms.Grayscale(num_output_channels=1), transforms.Resize(opt.isize),
                                     transforms.CenterCrop(opt.isize),
                                     transforms.ToTensor(),
-                                    transforms.Normalize((0.5,), (0.5))])
+                                    transforms.Normalize((0.5,), (0.5,))])
         train_ds = ImageFolder(os.path.join(opt.dataroot, 'train'), transform)
         valid_ds = ImageFolder(os.path.join(opt.dataroot, 'test'), transform)
     
     elif opt.dataset in ['anomaly10']:
         transform = transforms.Compose([transforms.Grayscale(num_output_channels=1), transforms.Resize(opt.isize),
-                                        transforms.CenterCrop(opt.isize),
                                         transforms.ToTensor(),
-                                        transforms.Normalize((0.5,), (0.5))])
+                                        transforms.Normalize((0.5,), (0.5,))])
         train_ds = ImageFolder(os.path.join(opt.dataroot, 'train'), transform)
         valid_ds = ImageFolder(os.path.join(opt.dataroot, 'test'), transform)
         
@@ -101,7 +99,7 @@ def load_data(opt):
                                         transforms.Resize(opt.isize),
                                         transforms.CenterCrop(opt.isize),
                                         transforms.ToTensor(),
-                                        transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))])
+                                        transforms.Normalize((0.5, ), (0.5, ))])
 
         train_ds = ImageFolder(os.path.join(opt.dataroot, 'train'), transform)
         valid_ds = ImageFolder(os.path.join(opt.dataroot, 'test'), transform)

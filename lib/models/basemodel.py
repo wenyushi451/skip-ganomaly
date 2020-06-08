@@ -24,6 +24,7 @@ import seaborn as sns
 import matplotlib.pyplot as plt
 
 from PIL import Image
+import wandb
 
 class BaseModel():
     """ Base Model for ganomaly
@@ -130,11 +131,11 @@ class BaseModel():
             os.makedirs(weight_dir)
 
         if is_best:
-            torch.save({'epoch': epoch, 'state_dict': self.netg.state_dict()}, f'{weight_dir}/netG_best.pth')
-            torch.save({'epoch': epoch, 'state_dict': self.netd.state_dict()}, f'{weight_dir}/netD_best.pth')
+            torch.save({'epoch': epoch, 'state_dict': self.netg.module.state_dict()}, f'{weight_dir}/netG_best.pth')
+            torch.save({'epoch': epoch, 'state_dict': self.netd.module.state_dict()}, f'{weight_dir}/netD_best.pth')
         else:
-            torch.save({'epoch': epoch, 'state_dict': self.netd.state_dict()}, f"{weight_dir}/netD_{epoch}.pth")
-            torch.save({'epoch': epoch, 'state_dict': self.netg.state_dict()}, f"{weight_dir}/netG_{epoch}.pth")
+            torch.save({'epoch': epoch, 'state_dict': self.netd.module.state_dict()}, f"{weight_dir}/netD_{epoch}.pth")
+            torch.save({'epoch': epoch, 'state_dict': self.netg.module.state_dict()}, f"{weight_dir}/netG_{epoch}.pth")
 
     def load_weights(self, epoch=None, is_best:bool=False, path=None):
         """ Load pre-trained weights of NetG and NetD
@@ -160,8 +161,9 @@ class BaseModel():
             fname_d = f"netD_{epoch}.pth"
 
         if path is None:
-            path_g = f"./output/{self.name}/{self.opt.dataset}/train/weights/{fname_g}"
-            path_d = f"./output/{self.name}/{self.opt.dataset}/train/weights/{fname_d}"
+            name = self.name.replace('-', '')
+            path_g = f"./output/{name}/{self.opt.dataset}/train/weights/{fname_g}"
+            path_d = f"./output/{name}/{self.opt.dataset}/train/weights/{fname_d}"
 
         # Load the weights of netg and netd.
         print('>> Loading weights...')
@@ -218,6 +220,8 @@ class BaseModel():
 
         # Train for niter epochs.
         print(f">> Training {self.name} on {self.opt.dataset} to detect {self.opt.abnormal_class}")
+        wandb.watch(self.netg, log="all")
+        wandb.watch(self.netd, log="all")
         for self.epoch in range(self.opt.iter, self.opt.niter):
             self.train_one_epoch()
             res = self.test()
